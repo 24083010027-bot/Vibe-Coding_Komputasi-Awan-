@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega Eco-Hero: Petualangan Selamatkan Bumi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap');
+
+        * { box-sizing: border-box; font-family: 'Nunito', sans-serif; }
+
+        body {
+            background: #a4b0be;
+            margin: 0; padding: 10px;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            user-select: none; overflow: hidden;
+        }
+
+        /* Konsol Game Arcade */
+        .arcade-cabinet {
+            background: #ffffff;
+            width: 100%; max-width: 600px;
+            height: 650px;
+            border-radius: 35px;
+            border: 6px solid #2f3542;
+            box-shadow: 0 16px 0 #2f3542, 0 25px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        /* Top Bar Status */
+        .game-header {
+            background: #2f3542;
+            color: white; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: 'Fredoka One', cursive; font-size: 16px;
+            z-index: 10;
+        }
+        .live-score { color: #f1c40f; }
+
+        /* Layar Utama Game */
+        .game-screen {
+            flex: 1; position: relative;
+            background: #dfe4ea; overflow: hidden;
+        }
+
+        /* Halaman Utama / Menu */
+        .screen-layer {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; text-align: center; display: none;
+        }
+
+        #menu-screen { 
+            display: flex; 
+            background: radial-gradient(circle, #74b9ff 0%, #0984e3 100%); 
+            color: white;
+        }
+        
+        h1 {
+            font-family: 'Fredoka One', cursive; font-size: 38px; margin: 0 0 10px 0;
+            text-shadow: 3px 3px 0 #2f3542; letter-spacing: 1px;
+            animation: bounce 0.6s ease infinite alternate;
+        }
+
+        /* Tombol Ceria 3D */
+        .btn-play {
+            font-family: 'Fredoka One', cursive; font-size: 22px;
+            padding: 15px 40px; background: #ff4757; color: white;
+            border: 4px solid #2f3542; border-radius: 25px;
+            box-shadow: 0 8px 0 #2f3542; cursor: pointer; transition: 0.1s;
+        }
+        .btn-play:active { transform: translateY(6px); box-shadow: 0 2px 0 #2f3542; }
+
+        /* --- MISI 1: TANGKAP SAMPAH --- */
+        #misi1-screen { background: linear-gradient(to bottom, #81ecec, #ffeaa7); }
+        
+        .instruksi-misi {
+            font-weight: 900; 
+            font-size: 16px;
+            margin: 0 auto;
+            max-width: 80%;
+            position: absolute; 
+            top: 20px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .keranjang-hero {
+            position: absolute; bottom: 80px; left: 50%;
+            width: 90px; height: 80px; background: #2ed573;
+            border: 4px solid #2f3542; border-radius: 15px;
+            transform: translateX(-50%);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 40px; box-shadow: 0 5px 0 #2f3542;
+            z-index: 3;
+            transition: left 0.1s ease-out;
+        }
+        
+        .benda-jatuh {
+            position: absolute; 
+            font-size: 45px; 
+            z-index: 1;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .kontrol-misi1 {
+            position: absolute; bottom: 10px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 20px;
+            z-index: 5;
+        }
+        .btn-panah {
+            width: 60px; height: 60px; background: #1e90ff; color: white;
+            border: 3px solid #2f3542; border-radius: 50%; font-size: 24px;
+            box-shadow: 0 4px 0 #2f3542; cursor: pointer;
+        }
+
+        /* --- MISI 2: BERSIHKAN SUNGAI (PERBAIKAN) --- */
+        #misi2-screen { background: linear-gradient(to bottom, #74b9ff, #0097e6); }
+        .air-sungai {
+            position: absolute; width: 100%; height: 60%; bottom: 0;
+            background: rgba(255,255,255,0.1); border-top: 5px dashed white;
+        }
+        .sampah-apung {
+            position: absolute; 
+            font-size: 60px; /* Ukuran diperbesar biar gampang diklik */
+            cursor: pointer;
+            animation: apung 1.5s ease-in-out infinite alternate;
+            transition: transform 0.1s ease;
+            padding: 10px; /* Area klik/sentuh diperluas */
+            z-index: 4;
+        }
+        @keyframes apung { from { transform: translateY(0) scale(1); } to { transform: translateY(-15px) scale(1.05); } }
+
+        /* --- MISI 3: DAUR ULANG ROBOT --- */
+        #misi3-screen { background: #ced6e0; }
+        .robot-container {
+            width: 160px; height: 180px; background: #747d8c;
+            border: 5px solid #2f3542; border-radius: 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; box-shadow: 0 8px 0 #2f3542;
+        }
+        .robot-layar {
+            width: 100px; height: 90px; background: #ffffff;
+            border: 4px solid #2f3542; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center; font-size: 55px;
+        }
+        .pilihan-daur {
+            display: flex; gap: 20px; margin-top: 40px;
+        }
+        .btn-daur {
+            font-family: 'Fredoka One', cursive; font-size: 16px; padding: 12px 25px;
+            border: 4px solid #2f3542; border-radius: 20px; color: white; cursor: pointer;
+            box-shadow: 0 5px 0 #2f3542;
+        }
+
+        /* Overlay Antar Babak / Berhasil */
+        .overlay-notif {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(47, 53, 66, 0.95); color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 50; display: none; text-align: center; padding: 20px;
+        }
+
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <div class="arcade-cabinet">
+        <div class="game-header">
+            <div>MISI: <span id="infoMisi">-</span></div>
+            <div class="live-score">⭐ SKOR: <span id="txtSkor">0</span></div>
+        </div>
+
+        <div class="game-screen" id="gameScreen">
+            
+            <div id="menu-screen" class="screen-layer">
+                <h1>ECO-HERO<br>ADVENTURE</h1>
+                <p style="font-weight:900; margin-bottom:30px;">Selesaikan 3 Misi Seru Penyelamat Bumi!</p>
+                <button class="btn-play" onclick="mulaiPetualangan()">MULAI GAME 🚀</button>
+            </div>
+
+            <div id="misi1-screen" class="screen-layer">
+                <div class="instruksi-misi">Tangkap Sampah ORGANIK (🟢 Daun/Buah) & Hindari ANORGANIK (🟡 Plastik/Kaleng)!</div>
+                <div id="heroKeranjang" class="keranjang-hero">🗑️</div>
+                <div class="kontrol-misi1">
+                    <button class="btn-panah" onclick="gerakKeranjang('kiri')">◀</button>
+                    <button class="btn-panah" onclick="gerakKeranjang('kanan')">▶</button>
+                </div>
+            </div>
+
+            <div id="misi2-screen" class="screen-layer">
+                <p style="font-weight:900; position:absolute; top:10px; color: white; text-shadow: 1px 1px 2px black; z-index: 2;">KETUK/KLIK SEMUA SAMPAH DI SUNGAI SEBELUM HANYUT!</p>
+                <div class="air-sungai"></div>
+            </div>
+
+            <div id="misi3-screen" class="screen-layer">
+                <p style="font-weight:900; margin-bottom: 20px;">Tebak Jenis Sampah di Layar Robot Dengan Cepat!</p>
+                <div class="robot-container">
+                    <div class="robot-layar" id="robotDisplay">❓</div>
+                </div>
+                <div class="pilihan-daur">
+                    <button class="btn-daur" style="background:#2ed573;" onclick="jawabRobot('organik')">ORGANIK</button>
+                    <button class="btn-daur" style="background:#eccc68; color:#2f3542;" onclick="jawabRobot('anorganik')">ANORGANIK</button>
+                </div>
+            </div>
+
+            <div id="overlayNotif" class="overlay-notif">
+                <h2 id="judulNotif" style="font-family:'Fredoka One'; font-size:32px; color:#f1c40f;">MISI BERHASIL!</h2>
+                <p id="pesanNotif" style="font-size:18px; margin: 10px 0 30px 0;">Bersiaplah untuk tantangan selanjutnya.</p>
+                <button class="btn-play" id="btnNotif" onclick="lanjutMisi()">LANJUTKAN ➡️</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let skor = 0;
+        let misiSekarang = 0; 
+        let gameInterval;
+        let posisiKeranjang = 50; 
+
+        const listSampah = [
+            { emoji: "🍏", jenis: "organik" }, { emoji: "🍌", jenis: "organik" },
+            { emoji: "🍂", jenis: "organik" }, { emoji: "🦴", jenis: "organik" },
+            { emoji: "🍼", jenis: "anorganik" }, { emoji: "🥫", jenis: "anorganik" },
+            { emoji: "🧃", jenis: "anorganik" }, { emoji: "🛍️", jenis: "anorganik" }
+        ];
+
+        function swithScreen(screenId) {
+            document.querySelectorAll('.screen-layer').forEach(s => s.style.display = 'none');
+            document.getElementById(screenId).style.display = 'flex';
+        }
+
+        function updateSkor(poin) {
+            skor += poin;
+            if (skor < 0) skor = 0;
+            document.getElementById('txtSkor').innerText = skor;
+        }
+
+        function mulaiPetualangan() {
+            skor = 0;
+            updateSkor(0);
+            misiSekarang = 1;
+            siapkanMisi1();
+        }
+
+        function tampilkanPengumuman(judul, pesan, teksTombol) {
+            document.getElementById('judulNotif').innerText = judul;
+            document.getElementById('pesanNotif').innerText = pesan;
+            document.getElementById('btnNotif').innerText = teksTombol;
+            document.getElementById('overlayNotif').style.display = "flex";
+        }
+
+        function lanjutMisi() {
+            document.getElementById('overlayNotif').style.display = "none";
+            if (misiSekarang === 1) {
+                misiSekarang = 2;
+                siapkanMisi2();
+            } else if (misiSekarang === 2) {
+                misiSekarang = 3;
+                siapkanMisi3();
+            } else {
+                swithScreen('menu-screen');
+                document.getElementById('infoMisi').innerText = "-";
+            }
+        }
+
+        /* ==================== MISI 1: TANGKAP SAMPAH ==================== */
+        function siapkanMisi1() {
+            document.getElementById('infoMisi').innerText = "1 - Tangkap Organik";
+            swithScreen('misi1-screen');
+            posisiKeranjang = 50;
+            document.getElementById('heroKeranjang').style.left = posisiKeranjang + '%';
+            
+            let durasi = 0;
+
+            document.getElementById('misi1-screen').onmousemove = function(e) {
+                let rect = this.getBoundingClientRect();
+                let x = ((e.clientX - rect.left) / rect.width) * 100;
+                if(x > 8 && x < 92) {
+                    posisiKeranjang = x;
+                    document.getElementById('heroKeranjang').style.left = posisiKeranjang + '%';
+                }
+            };
+
+            gameInterval = setInterval(() => {
+                durasi++;
+                
+                if (durasi % 30 === 0) {
+                    buatSampahJatuh();
+                }
+                perbaruiSampahJatuh();
+
+                if (durasi >= 400) { 
+                    clearInterval(gameInterval);
+                    document.querySelectorAll('.benda-jatuh').forEach(el => el.remove());
+                    tampilkanPengumuman("MISI 1 SELESAI! 🎉", "Kerja bagus! Sekarang sungai tersumbat sampah menantimu di Misi 2!", "KE SUNGAI 🌊");
+                }
+            }, 50);
+        }
+
+        function gerakKeranjang(arah) {
+            if (arah === 'kiri' && posisiKeranjang > 15) posisiKeranjang -= 10;
+            if (arah === 'kanan' && posisiKeranjang < 85) posisiKeranjang += 10;
+            document.getElementById('heroKeranjang').style.left = posisiKeranjang + '%';
+        }
+
+        function buatSampahJatuh() {
+            let acak = listSampah[Math.floor(Math.random() * listSampah.length)];
+            let el = document.createElement('div');
+            el.className = 'benda-jatuh';
+            el.innerText = acak.emoji;
+            el.dataset.jenis = acak.jenis;
+            el.style.left = Math.floor(Math.random() * 80 + 10) + '%';
+            el.dataset.topPos = -50; 
+            el.style.top = '-50px';
+            document.getElementById('misi1-screen').appendChild(el);
+        }
+
+        function perbaruiSampahJatuh() {
+            let semua = document.querySelectorAll('.benda-jatuh');
+            let keranjang = document.getElementById('heroKeranjang').getBoundingClientRect();
+
+            semua.forEach(el => {
+                let topPos = parseFloat(el.dataset.topPos);
+                topPos += 6; 
+                el.dataset.topPos = topPos;
+                el.style.top = topPos + 'px';
+
+                let r = el.getBoundingClientRect();
+                
+                if (r.bottom >= keranjang.top && r.top <= keranjang.bottom && r.right >= keranjang.left && r.left <= keranjang.right) {
+                    if (el.dataset.jenis === 'organik') {
+                        updateSkor(15); 
+                    } else {
+                        updateSkor(-10); 
+                    }
+                    el.remove();
+                } else if (topPos > 580) {
+                    el.remove(); 
+                }
+            });
+        }
+
+        /* ==================== MISI 2: BERSIHKAN SUNGAI (PERBAIKAN KECEPATAN & JARAK) ==================== */
+        function siapkanMisi2() {
+            document.getElementById('infoMisi').innerText = "2 - Bersihkan Sungai";
+            swithScreen('misi2-screen');
+            let counter = 0;
+
+            gameInterval = setInterval(() => {
+                counter++;
+                
+                // DIUBAH: Sampah muncul lebih lambat (setiap 40 putaran, sebelumnya 20) agar tidak menumpuk
+                if (counter % 40 === 0) {
+                    buatSampahApung();
+                }
+                
+                document.querySelectorAll('.sampah-apung').forEach(el => {
+                    let leftPos = parseFloat(el.dataset.leftPos) || 0;
+                    
+                    // DIUBAH: Kecepatan hanyut dikurangi jadi 0.8 (sebelumnya 2) agar lambat dan santai
+                    leftPos += 0.8; 
+                    
+                    el.dataset.leftPos = leftPos;
+                    el.style.left = leftPos + '%';
+                    if(leftPos > 105) el.remove();
+                });
+
+                if (counter >= 400) {
+                    clearInterval(gameInterval);
+                    document.querySelectorAll('.sampah-apung').forEach(el => el.remove());
+                    tampilkanPengumuman("MISI 2 BERHASIL! 🐟", "Sungai kembali jernih! Sekarang ayo operasikan Mesin Daur Ulang!", "MENUJU ROBOT 🤖");
+                }
+            }, 60);
+        }
+
+        function buatSampahApung() {
+            let acak = listSampah[Math.floor(Math.random() * listSampah.length)];
+            let el = document.createElement('div');
+            el.className = 'sampah-apung';
+            el.innerText = acak.emoji;
+            el.dataset.leftPos = -15;
+            el.style.left = '-15%';
+            el.style.top = Math.floor(Math.random() * 35 + 45) + '%';
+            
+            // Logika ketuk/klik hancur
+            el.onclick = function() {
+                updateSkor(10);
+                this.style.transform = "scale(0)";
+                setTimeout(() => this.remove(), 100);
+            };
+
+            document.getElementById('misi2-screen').appendChild(el);
+        }
+
+        /* ==================== MISI 3: ROBOT MEMORY ==================== */
+        let sampahAktifRobot = null;
+        let babakRobot = 0;
+
+        function siapkanMisi3() {
+            document.getElementById('infoMisi').innerText = "3 - Daur Ulang Kilat";
+            swithScreen('misi3-screen');
+            babakRobot = 0;
+            acakItemRobot();
+        }
+
+        function acakItemRobot() {
+            if (babakRobot >= 6) {
+                tampilkanPengumuman("KEMENANGAN TOTAL! 👑", `Skor Akhirmu: ${skor} Poin. Kamu resmi menjadi Pahlawan Penyelamat Bumi!`, "SELESAI 🎮");
+                return;
+            }
+            babakRobot++;
+            sampahAktifRobot = listSampah[Math.floor(Math.random() * listSampah.length)];
+            document.getElementById('robotDisplay').innerText = sampahAktifRobot.emoji;
+        }
+
+        function jawabRobot(jawabanTebakan) {
+            if (!sampahAktifRobot) return;
+
+            if (sampahAktifRobot.jenis === jawabanTebakan) {
+                updateSkor(20);
+                document.getElementById('robotDisplay').innerText = "✅";
+            } else {
+                updateSkor(-10);
+                document.getElementById('robotDisplay').innerText = "❌";
+            }
+
+            sampahAktifRobot = null;
+            setTimeout(() => {
+                acakItemRobot();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
