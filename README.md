@@ -8,7 +8,9 @@
 
 # Contoh Kalimat di WebApp
 "besok bangun jam 6 pagi terus ada kelas jam 8, mau nyuci baju siang hari, ngerjain tugas kelompok jam 7 malam, dan mau tidur jam 10..."
+
 "hari sabtu mau bangun santai jam 7, lanjut beresin kamar, sore jam 4 mau jogging di taman, malamnya mau nonton film sambil santai..."
+
 "besok harus ke bank jam 9 pagi, lanjut rapat kerja jam 1 siang, sore jam 5 beli bahan makanan di supermarket, malam jam 8 lanjut belajar coding..."
 
 # React + TypeScript + Vite
