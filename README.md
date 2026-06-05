@@ -1,3 +1,16 @@
+# Cara Menjalankan WebApp
+1. Download file ZIP SMARTDAY PLANNER AI
+2. Jalankan di VSCODE atau yang lain
+3. Pastikan sejajar dengan file package.json
+4. Ketik "npm install' di terminal, setelah berhasil;
+5. Ketik "npm run dev"
+6. Buka WebApp lewat "http://localhost:5173/" di terminal
+
+# Contoh Kalimat di WebApp
+"besok bangun jam 6 pagi terus ada kelas jam 8, mau nyuci baju siang hari, ngerjain tugas kelompok jam 7 malam, dan mau tidur jam 10..."
+"hari sabtu mau bangun santai jam 7, lanjut beresin kamar, sore jam 4 mau jogging di taman, malamnya mau nonton film sambil santai..."
+"besok harus ke bank jam 9 pagi, lanjut rapat kerja jam 1 siang, sore jam 5 beli bahan makanan di supermarket, malam jam 8 lanjut belajar coding..."
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
